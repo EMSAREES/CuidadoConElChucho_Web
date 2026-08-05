@@ -65,7 +65,7 @@ namespace CuidadoConElChucho_Web.Context
 
                 // Category -> Products
                 e.HasOne(p => p.Category)
-                    .WithMany()
+                    .WithMany(c => c.Products)
                     .HasForeignKey(p => p.CategoryId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
