@@ -1,4 +1,6 @@
 using CuidadoConElChucho_Web.Context;
+using CuidadoConElChucho_Web.Repositories;
+using CuidadoConElChucho_Web.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             builder.Configuration.GetConnectionString("DefaultConnection")
         )
     ));
+
+//builder.Services.AddScoped(typeof(GenericRepository<>)); // -> en caso de tener un generico repositorio , se puede registrar de esta manera
+builder.Services.AddScoped<CategoryRepository>();
+builder.Services.AddScoped<CategoryService>();
 
 var app = builder.Build();
 
