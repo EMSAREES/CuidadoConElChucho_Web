@@ -6,15 +6,15 @@
 
         public int OrderId { get; set; }
 
-        public int ProductId { get; set; }
+        public int ProductVariationId { get; set; }
 
-        public int Quantity {  get; set; }
+        public int Quantity { get; set; }
 
         public decimal Price { get; set; }
 
-        public Order Order { get; set; }
+        public Order Order { get; set; } = null!;
 
-        public Product product { get; set; }
+        public ProductVariation ProductVariation { get; set; } = null!;
 
     }
 }

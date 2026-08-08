@@ -7,9 +7,10 @@ namespace CuidadoConElChucho_Web.Entities
         public int CategoryId { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public ICollection<Product> Products { get; set; }
+            = new List<Product>();
 
     }
 }

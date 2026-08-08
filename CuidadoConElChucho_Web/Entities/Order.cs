@@ -1,4 +1,6 @@
-﻿namespace CuidadoConElChucho_Web.Entities
+﻿using CuidadoConElChucho_Web.Enums;
+
+namespace CuidadoConElChucho_Web.Entities
 {
     public class Order
     {
@@ -10,8 +12,11 @@
 
         public decimal TotalAmount { get; set; }
 
-        public User? User { get; set; }
+        public OrderStatus Status { get; set; }
+
+        public User User { get; set; } = null!;
 
         public ICollection<OrderItem> OrderItems { get; set; }
+            = new List<OrderItem>();
     }
 }

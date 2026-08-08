@@ -1,5 +1,6 @@
 ﻿using CuidadoConElChucho_Web.Models;
 using CuidadoConElChucho_Web.Repositories;
+using CuidadoConElChucho_Web.Entities;
 
 namespace CuidadoConElChucho_Web.Services
 {
@@ -24,6 +25,30 @@ namespace CuidadoConElChucho_Web.Services
                 }).ToList();
 
             return categoryVMs;
+        }
+
+        public async Task<bool> AddAsync(CategoryVM categoryVM)
+        {
+            // Las categorías siempre se almacenan en mayúsculas.
+            var categoryName = categoryVM.Name.Trim().ToUpper();
+
+            // Verificar si ya existe.
+            var exists = await categoryRepository
+                .ExistsByNameAsync(categoryName);
+
+            if (exists)
+            {
+                return false;
+            }
+
+            var category = new Category
+            {
+                Name = categoryName
+            };
+
+            await categoryRepository.AddAsync(category);
+
+            return true;
         }
     }
 

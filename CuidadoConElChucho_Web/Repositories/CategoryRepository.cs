@@ -6,6 +6,10 @@ namespace CuidadoConElChucho_Web.Repositories
 {
     public class CategoryRepository(AppDbContext dbContext) : GenericRepository<Category>(dbContext)
     {
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            return await _dbSet.AnyAsync(c => c.Name == name);
+        }
     }
 
     //public class CategoryRepository: GenericRepository<Category>

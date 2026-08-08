@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 
 namespace CuidadoConElChucho_Web.Entities
 {
@@ -6,17 +7,23 @@ namespace CuidadoConElChucho_Web.Entities
     {
         public int ProductVariationId { get; set; }
 
-        [Required]
-        public string Color { get; set; }   // Ej. "Rojo", "Azul"
+        public int ProductId { get; set; }
+
+        public int ColorId { get; set; }
+
+        public int SizeId { get; set; }
 
         [Required]
-        public string Size { get; set; }    // Ej. "S", "M", "L", "XL"
+        public string SKU { get; set; } = null!;
 
-        public int Stock { get; set; }      // Stock específico para esa talla/color
+        public int Stock { get; set; }
+
         public string? ImageName { get; set; }
 
-        // Relación con producto
-        public int ProductId { get; set; }
-        public Product Product { get; set; }
+        public Product Product { get; set; } = null!;
+
+        public Color Color { get; set; } = null!;
+
+        public Size Size { get; set; } = null!;
     }
 }
