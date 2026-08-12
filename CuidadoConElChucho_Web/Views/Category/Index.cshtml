@@ -1,19 +1,19 @@
 ﻿@model List<CategoryVM>
 
-<div class="row justify-content-around mt-4">
+<div class="row justify-content-between mt-4">
     <div class="Col-4">
-        <h4>Categoria</h4>
+        <h4>Category</h4>
     </div>
 
     <div class="col-4 text-end">
-        <a href="#" class="btn btn-success"><i class="fa-solid fa-plus"></i> Crear</a>
+        <a href="/Category/AddEdit" class="btn btn-success"><i class="fa-solid fa-plus"></i> Create new</a>
     </div>
 </div>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Nombre</th>
+            <th>Name</th>
             <th style="width:120px">Acciones</th>
         </tr>
     </thead>
@@ -23,10 +23,18 @@
             <tr>
                 <td>@category.Name</td>
                 <td style="width:120px">
-                    <a href="#" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen"></i></a>
-                    <a class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></a>
+                    <a href="/Category/AddEdit/@category.CategoryId" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen"></i></a>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCategory(@category.CategoryId)"><i class="fa-solid fa-trash"></i></button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<script>
+    function deleteCategory(id) {
+        if (confirm("Are you sure you want to delete this category?")) {
+            window.location.href = '@Url.Action("Delete", "Category")' + '?id' + id;
+        }
+    }
+</script>
