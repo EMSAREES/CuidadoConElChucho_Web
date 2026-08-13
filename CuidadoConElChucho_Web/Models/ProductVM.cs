@@ -26,6 +26,10 @@ namespace CuidadoConElChucho_Web.Models
         [Display(Name = "Precio")]
         public decimal Price { get; set; }
 
+        [Range(0.01, 999999.99, ErrorMessage = "El precio con descuento debe ser mayor a 0")]
+        [Display(Name = "Precio con descuento (opcional)")]
+        public decimal? SalePrice { get; set; }
+
         [Display(Name = "Producto activo")]
         public bool IsActive { get; set; } = true;
 
@@ -40,15 +44,21 @@ namespace CuidadoConElChucho_Web.Models
 
         public string? CategoryName { get; set; }
 
-        // Solo lectura, calculados para el listado (Index)
         public int TotalStock { get; set; }
         public List<string> ColorSwatches { get; set; } = new();
         public int SizeCount { get; set; }
 
-        // Fotos adicionales (frente, espalda, perfiles...)
         public List<ProductImageVM> GalleryImages { get; set; } = new();
-
-        // Variantes: un bloque por color, con sus tallas y stock
         public List<ProductVariantGroupVM> Variants { get; set; } = new();
+
+        // Calculados: no se guardan en BD, solo para mostrar en tarjetas/detalle
+        public bool HasDiscount => SalePrice.HasValue && SalePrice.Value < Price;
+
+        // Lo que realmente paga el cliente
+        public decimal DisplayPrice => HasDiscount ? SalePrice!.Value : Price;
+
+        public int DiscountPercentage => HasDiscount
+            ? (int)Math.Round((1 - (SalePrice!.Value / Price)) * 100)
+            : 0;
     }
 }

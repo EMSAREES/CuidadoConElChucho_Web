@@ -242,3 +242,38 @@ function cchConfirmDelete(url, itemName) {
         }
     });
 }
+
+/* ---------- TARJETA CLICABLE + PRECIO DE OFERTA ---------- */
+.cch - product - link {
+    display: block;
+    color: inherit;
+    text - decoration: none;
+    cursor: pointer;
+}
+
+.cch - product - link: hover.cch - product - name {
+    text - decoration: underline;
+}
+
+.cch - product - discount - badge {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: var(--cch - danger);
+    color: #fff;
+    font - weight: 700;
+    font - size: .7rem;
+    padding: .25rem .6rem;
+    border - radius: 50px;
+}
+
+.cch - product - price - row {
+    display: flex;
+    align - items: baseline;
+    gap: .5rem;
+    margin - bottom: .3rem;
+}
+
+.cch - product - price - row.cch - product - price {
+    margin - top: 0;
+}

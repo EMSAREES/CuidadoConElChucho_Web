@@ -62,6 +62,12 @@ namespace CuidadoConElChucho_Web.Controllers
                 return View(entityVM);
             }
 
+            if (entityVM.SalePrice.HasValue && entityVM.SalePrice.Value >= entityVM.Price)
+            {
+                ModelState.AddModelError(nameof(entityVM.SalePrice),
+                    "El precio con descuento debe ser menor al precio regular.");
+            }
+
             if (entityVM.ImageFile != null && entityVM.ImageFile.Length > 0)
             {
                 entityVM.ImageName = await _imageService.SaveImageAsync(entityVM.ImageFile, ImageFolder);

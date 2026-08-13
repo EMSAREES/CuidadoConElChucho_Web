@@ -1,0 +1,162 @@
+﻿@model CuidadoConElChucho_Web.Models.ProductDetailVM
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="cchs-breadcrumb">
+    <a asp-controller="Product" asp-action="Index"><i class="fa-solid fa-arrow-left"></i></a>
+    <span>@Model.CategoryName.ToUpper()</span>
+</div>
+
+<div class="cchs-product-layout">
+
+    <!-- ===== GALERÍA ===== -->
+    <div class="cchs-gallery">
+        <div class="cchs-gallery-main" id="galleryMain">
+            @if (Model.Images.Count > 0)
+            {
+                <img id="galleryMainImg" src="~/images/products/@Model.Images[0]" alt="@Model.Name" />
+            }
+            else
+            {
+                <div class="cchs-no-image"><i class="fa-solid fa-image"></i></div>
+            }
+
+            @if (Model.HasDiscount)
+            {
+                <span class="cchs-badge-discount">-@Model.DiscountPercentage%</span>
+            }
+        </div>
+
+        @if (Model.Images.Count > 1)
+        {
+            <div class="cchs-thumbs">
+                @for (int i = 0; i < Model.Images.Count; i++)
+                {
+                    <button type="button" class="cchs-thumb @(i == 0 ? "cchs-thumb-active" : "")"
+                            data-src="~/images/products/@Model.Images[i]">
+                        <img src="~/images/products/@Model.Images[i]" />
+                    </button>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- ===== INFO ===== -->
+    <div class="cchs-info">
+        <div class="cchs-eyebrow">@Model.GenderName · @Model.CategoryName</div>
+        <h1 class="cchs-title">@Model.Name</h1>
+
+        <div class="cchs-price-row">
+            <span class="cchs-price">$@Model.DisplayPrice.ToString("N2")</span>
+            @if (Model.HasDiscount)
+            {
+                <span class="cchs-price-old">$@Model.Price.ToString("N2")</span>
+                <span class="cchs-price-badge">-@Model.DiscountPercentage%</span>
+            }
+        </div>
+
+        @if (Model.Colors.Count > 0)
+        {
+            <div class="cchs-section">
+                <label class="cchs-label">Color: <span id="selectedColorName">selecciona uno</span></label>
+                <div class="cchs-swatches" id="colorSwatches">
+                    @foreach (var color in Model.Colors)
+                    {
+                        <button type="button" class="cchs-swatch"
+                                style="background:@(color.HexCode ?? "#cccccc")"
+                                data-color-id="@color.ColorId"
+                                data-color-name="@color.Name"
+                                data-image="@(string.IsNullOrEmpty(color.ImageName) ? "" : Url.Content("~/images/products/variants/" + color.ImageName))"
+                                title="@color.Name">
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="cchs-section">
+                <label class="cchs-label">Talla</label>
+                <div class="cchs-sizes" id="sizesContainer">
+                    <div class="cchs-sizes-placeholder" id="sizesPlaceholder">
+                        Elige un color para ver las tallas disponibles
+                    </div>
+                    @foreach (var color in Model.Colors)
+                    {
+                        <div class="cchs-size-group d-none" data-color-id="@color.ColorId">
+                            @foreach (var size in color.Sizes)
+                            {
+                                <button type="button"
+                                        class="cchs-size-btn @(!size.InStock ? "cchs-size-disabled" : "")"
+                                        data-size-id="@size.SizeId"
+                                        data-sku="@size.SKU"
+                                        @(size.InStock ? "" : "disabled")>
+                                    @size.Name
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <button type="button" class="cchs-select-btn" id="addToCartBtn" disabled>
+                SELECCIONA COLOR Y TALLA
+            </button>
+        }
+        else
+        {
+            <div class="cchs-out-of-stock">
+                <i class="fa-solid fa-triangle-exclamation"></i> Este producto no tiene existencias por el momento.
+            </div>
+        }
+
+        <div class="cchs-description">
+            <h3>Descripción</h3>
+            <p>@Model.Description</p>
+            <div class="cchs-sku" id="skuDisplay"></div>
+        </div>
+    </div>
+</div>
+
+@if (Model.SimilarProducts.Count > 0)
+{
+    <div class="cchs-similar">
+        <h2>Productos similares</h2>
+        <div class="cch-product-grid">
+            @foreach (var similar in Model.SimilarProducts)
+            {
+                <a href="/producto/@similar.ProductId" class="cch-product-card cchs-similar-card">
+                    <div class="cch-product-media">
+                        @if (!string.IsNullOrEmpty(similar.ImageName))
+                        {
+                            <img src="~/images/products/@similar.ImageName" alt="@similar.Name" />
+                        }
+                        else
+                        {
+                            <div class="cch-no-image"><i class="fa-solid fa-image"></i></div>
+                        }
+
+                        @if (similar.HasDiscount)
+                        {
+                            <span class="cch-product-status cch-status-inactive">-@similar.DiscountPercentage%</span>
+                        }
+                    </div>
+                    <div class="cch-product-body">
+                        <div class="cch-product-name">@similar.Name</div>
+                        <div class="cchs-similar-price-row">
+                            <span class="cch-product-price">$@similar.DisplayPrice.ToString("N2")</span>
+                            @if (similar.HasDiscount)
+                            {
+                                <span class="cchs-similar-old">$@similar.Price.ToString("N2")</span>
+                            }
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/shop.js" asp-append-version="true"></script>
+}

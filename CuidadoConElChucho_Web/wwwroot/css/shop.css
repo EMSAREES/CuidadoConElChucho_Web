@@ -1,0 +1,324 @@
+﻿
+.cchs-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin: 1.5rem 0 1rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    color: var(--cch-black);
+}
+
+    .cchs-breadcrumb a {
+        color: var(--cch-gray);
+        text-decoration: none;
+    }
+
+        .cchs-breadcrumb a:hover {
+            color: var(--cch-black);
+        }
+
+.cchs-product-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+@media (max-width: 860px) {
+    .cchs-product-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- GALERÍA ---------- */
+.cchs-gallery-main {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    background: var(--cch-gray-light);
+    border-radius: var(--cch-radius);
+    overflow: hidden;
+}
+
+    .cchs-gallery-main img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.cchs-no-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c2c2c2;
+    font-size: 3rem;
+}
+
+.cchs-badge-discount {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: var(--cch-danger);
+    color: #fff;
+    font-weight: 700;
+    padding: .35rem .7rem;
+    border-radius: 50px;
+    font-size: .8rem;
+}
+
+.cchs-thumbs {
+    display: flex;
+    gap: .6rem;
+    margin-top: .8rem;
+    flex-wrap: wrap;
+}
+
+.cchs-thumb {
+    width: 66px;
+    height: 66px;
+    border-radius: var(--cch-radius-sm);
+    overflow: hidden;
+    border: 2px solid transparent;
+    padding: 0;
+    cursor: pointer;
+    background: var(--cch-gray-light);
+}
+
+    .cchs-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.cchs-thumb-active {
+    border-color: var(--cch-yellow-dark);
+}
+
+/* ---------- INFO ---------- */
+.cchs-eyebrow {
+    text-transform: uppercase;
+    font-size: .78rem;
+    color: var(--cch-gray);
+    font-weight: 600;
+    letter-spacing: .5px;
+    margin-bottom: .3rem;
+}
+
+.cchs-title {
+    font-family: var(--font-display);
+    font-size: 2.3rem;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin: 0 0 .8rem;
+    color: var(--cch-black);
+}
+
+.cchs-price-row {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    margin-bottom: 1.6rem;
+}
+
+.cchs-price {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    color: var(--cch-black);
+}
+
+.cchs-price-old {
+    font-size: 1.1rem;
+    color: var(--cch-gray);
+    text-decoration: line-through;
+}
+
+.cchs-price-badge {
+    background: var(--cch-danger);
+    color: #fff;
+    font-weight: 700;
+    font-size: .78rem;
+    padding: .25rem .55rem;
+    border-radius: 50px;
+}
+
+.cchs-section {
+    margin-bottom: 1.4rem;
+}
+
+.cchs-label {
+    display: block;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: .8rem;
+    letter-spacing: .4px;
+    margin-bottom: .6rem;
+    color: var(--cch-black);
+}
+
+    .cchs-label span {
+        font-weight: 500;
+        text-transform: none;
+        color: var(--cch-gray);
+    }
+
+.cchs-swatches {
+    display: flex;
+    gap: .6rem;
+    flex-wrap: wrap;
+}
+
+.cchs-swatch {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1.5px var(--cch-border);
+    cursor: pointer;
+    transition: box-shadow .15s ease, transform .15s ease;
+}
+
+    .cchs-swatch:hover {
+        transform: translateY(-2px);
+    }
+
+.cchs-swatch-active {
+    box-shadow: 0 0 0 2.5px var(--cch-black);
+}
+
+.cchs-sizes {
+    display: flex;
+    gap: .6rem;
+    flex-wrap: wrap;
+}
+
+.cchs-sizes-placeholder {
+    font-size: .85rem;
+    color: var(--cch-gray);
+}
+
+.cchs-size-group {
+    display: contents;
+}
+
+.cchs-size-btn {
+    min-width: 56px;
+    height: 46px;
+    padding: 0 .8rem;
+    border: 1.5px solid var(--cch-black);
+    background: #fff;
+    color: var(--cch-black);
+    font-weight: 600;
+    border-radius: var(--cch-radius-sm);
+    cursor: pointer;
+    transition: all .15s ease;
+}
+
+    .cchs-size-btn:hover:not(:disabled) {
+        background: var(--cch-black);
+        color: var(--cch-yellow);
+    }
+
+.cchs-size-btn-active {
+    background: var(--cch-black);
+    color: var(--cch-yellow);
+}
+
+.cchs-size-disabled,
+.cchs-size-btn:disabled {
+    border-color: var(--cch-border);
+    color: #c2c2c2;
+    text-decoration: line-through;
+    cursor: not-allowed;
+}
+
+.cchs-select-btn {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: var(--cch-radius-sm);
+    background: var(--cch-gray-light);
+    color: var(--cch-gray);
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    cursor: not-allowed;
+    transition: all .2s ease;
+    margin-top: .5rem;
+}
+
+    .cchs-select-btn.cchs-ready {
+        background: var(--cch-black);
+        color: var(--cch-yellow);
+        cursor: pointer;
+    }
+
+        .cchs-select-btn.cchs-ready:hover {
+            background: var(--cch-yellow);
+            color: var(--cch-black);
+        }
+
+.cchs-out-of-stock {
+    background: #fdecee;
+    color: var(--cch-danger);
+    border-radius: var(--cch-radius-sm);
+    padding: .9rem 1.1rem;
+    font-weight: 600;
+}
+
+.cchs-description {
+    margin-top: 2rem;
+    border-top: 1px solid var(--cch-border);
+    padding-top: 1.4rem;
+}
+
+    .cchs-description h3 {
+        font-family: var(--font-display);
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        margin-bottom: .5rem;
+    }
+
+    .cchs-description p {
+        color: #444;
+        line-height: 1.6;
+    }
+
+.cchs-sku {
+    margin-top: .8rem;
+    font-size: .78rem;
+    color: var(--cch-gray);
+}
+
+/* ---------- PRODUCTOS SIMILARES ---------- */
+.cchs-similar {
+    margin: 3rem 0;
+}
+
+    .cchs-similar h2 {
+        font-family: var(--font-display);
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        font-size: 1.6rem;
+        margin-bottom: 1.2rem;
+    }
+
+.cchs-similar-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.cchs-similar-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: .5rem;
+}
+
+.cchs-similar-old {
+    font-size: .8rem;
+    color: var(--cch-gray);
+    text-decoration: line-through;
+}

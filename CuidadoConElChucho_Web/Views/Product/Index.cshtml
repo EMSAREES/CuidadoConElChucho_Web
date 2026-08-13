@@ -29,56 +29,73 @@ else
         @foreach (var product in Model)
         {
             <div class="cch-product-card" data-search-item="@product.Name @product.CategoryName">
-                <div class="cch-product-media">
-                    @if (!string.IsNullOrEmpty(product.ImageName))
-                    {
-                        <img src="~/images/products/@product.ImageName" alt="@product.Name" />
-                    }
-                    else
-                    {
-                        <div class="cch-no-image"><i class="fa-solid fa-image"></i></div>
-                    }
 
-                    @if (!string.IsNullOrEmpty(product.CategoryName))
-                    {
-                        <span class="cch-product-category">@product.CategoryName</span>
-                    }
-
-                    <span class="cch-product-status @(product.IsActive ? "cch-status-active" : "cch-status-inactive")">
-                        @(product.IsActive ? "Activo" : "Inactivo")
-                    </span>
-                </div>
-
-                <div class="cch-product-body">
-                    <div class="cch-product-name">@product.Name</div>
-                    <div class="cch-product-gender">@product.Gender.GetDisplayName()</div>
-
-                    <div class="cch-product-swatches">
-                        @foreach (var hex in product.ColorSwatches.Take(5))
+                <a href="/producto/@product.ProductId" class="cch-product-link" title="Ver en tienda">
+                    <div class="cch-product-media">
+                        @if (!string.IsNullOrEmpty(product.ImageName))
                         {
-                            <span class="cch-swatch" style="background:@hex"></span>
+                            <img src="~/images/products/@product.ImageName" alt="@product.Name" />
                         }
-                        @if (product.ColorSwatches.Count > 5)
+                        else
                         {
-                            <span class="cch-swatch-more">+@(product.ColorSwatches.Count - 5)</span>
+                            <div class="cch-no-image"><i class="fa-solid fa-image"></i></div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(product.CategoryName))
+                        {
+                            <span class="cch-product-category">@product.CategoryName</span>
+                        }
+
+                        <span class="cch-product-status @(product.IsActive ? "cch-status-active" : "cch-status-inactive")">
+                            @(product.IsActive ? "Activo" : "Inactivo")
+                        </span>
+
+                        @if (product.HasDiscount)
+                        {
+                            <span class="cch-product-discount-badge">-@product.DiscountPercentage%</span>
                         }
                     </div>
 
-                    <div class="cch-product-price">$@product.Price.ToString("N2")</div>
+                    <div class="cch-product-body">
+                        <div class="cch-product-name">@product.Name</div>
+                        <div class="cch-product-gender">@product.Gender.GetDisplayName()</div>
 
-                    <div class="cch-product-stock @(product.TotalStock == 0 ? "text-danger" : "")">
-                        <i class="fa-solid fa-box"></i> @(product.TotalStock == 0 ? "Sin stock" : $"{product.TotalStock} en stock")
-                    </div>
+                        @if (product.ColorSwatches.Count > 0)
+                        {
+                            <div class="cch-product-swatches">
+                                @foreach (var hex in product.ColorSwatches.Take(5))
+                                {
+                                    <span class="cch-swatch" style="background:@hex"></span>
+                                }
+                                @if (product.ColorSwatches.Count > 5)
+                                {
+                                    <span class="cch-swatch-more">+@(product.ColorSwatches.Count - 5)</span>
+                                }
+                            </div>
+                        }
 
-                    <div class="cch-product-actions">
-                        <a href="/Product/AddEdit/@product.ProductId" class="btn-cch-icon btn-cch-edit">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                        <button type="button" class="btn-cch-icon btn-cch-delete"
-                                onclick="cchConfirmDelete('@Url.Action("Delete", "Product")?id=@product.ProductId', '@product.Name')">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                        <div class="cch-product-price-row">
+                            <span class="cch-product-price">$@product.DisplayPrice.ToString("N2")</span>
+                            @if (product.HasDiscount)
+                            {
+                                <span class="cchs-price-old">$@product.Price.ToString("N2")</span>
+                            }
+                        </div>
+
+                        <div class="cch-product-stock @(product.TotalStock == 0 ? "text-danger" : "")">
+                            <i class="fa-solid fa-box"></i> @(product.TotalStock == 0 ? "Sin stock" : $"{product.TotalStock} en stock")
+                        </div>
                     </div>
+                </a>
+
+                <div class="cch-product-actions" onclick="event.stopPropagation()">
+                    <a href="/Product/AddEdit/@product.ProductId" class="btn-cch-icon btn-cch-edit" title="Editar">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <button type="button" class="btn-cch-icon btn-cch-delete" title="Eliminar"
+                            onclick="cchConfirmDelete('@Url.Action("Delete", "Product")?id=@product.ProductId', '@product.Name')">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
                 </div>
             </div>
         }

@@ -283,6 +283,9 @@ namespace CuidadoConElChucho_Web.Context
                 e.Property(p => p.Price)
                     .HasColumnType("decimal(10,2)");
 
+                e.Property(p => p.SalePrice)
+                    .HasColumnType("decimal(10,2)");
+
                 e.Property(p => p.IsActive)
                     .IsRequired();
 

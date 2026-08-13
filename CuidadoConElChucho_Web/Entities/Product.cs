@@ -16,7 +16,12 @@ namespace CuidadoConElChucho_Web.Entities
         [Required]
         public string Description { get; set; } = null!;
 
+        // Precio regular del producto. Siempre es el precio base.
         public decimal Price { get; set; }
+
+        // Precio de oferta (opcional). Si tiene valor y es menor a Price,
+        // el producto se muestra "en oferta" con ese precio.
+        public decimal? SalePrice { get; set; }
 
         public bool IsActive { get; set; } = true;
 

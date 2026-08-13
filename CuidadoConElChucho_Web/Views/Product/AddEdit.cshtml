@@ -75,6 +75,16 @@
                         <span asp-validation-for="Price" class="text-danger"></span>
                     </div>
 
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="SalePrice" class="form-label">Precio con descuento (opcional)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input asp-for="SalePrice" class="form-control" autocomplete="off" placeholder="Ej. 375.20" />
+                        </div>
+                        <span asp-validation-for="SalePrice" class="text-danger"></span>
+                        <div class="cch-subtitle mt-1">Llénalo solo si el producto está en oferta ahora mismo. El precio regular no se toca.</div>
+                    </div>
+
                     <div class="col-12 col-sm-6 d-flex align-items-end">
                         <div class="form-check form-switch">
                             <input asp-for="IsActive" class="form-check-input" role="switch" />

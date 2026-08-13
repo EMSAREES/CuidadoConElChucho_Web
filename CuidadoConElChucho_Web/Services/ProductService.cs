@@ -1,4 +1,5 @@
 ﻿using CuidadoConElChucho_Web.Entities;
+using CuidadoConElChucho_Web.Extensions;
 using CuidadoConElChucho_Web.Models;
 using CuidadoConElChucho_Web.Repositories;
 
@@ -16,7 +17,7 @@ namespace CuidadoConElChucho_Web.Services
         private const string ProductImageFolder = "images/products";
         private const string VariantImageFolder = "images/products/variants";
 
-        // ---------- LISTADOS ----------
+        // ---------- LISTADOS (ADMIN) ----------
 
         public async Task<IEnumerable<ProductVM>> GetAllAsync()
         {
@@ -64,7 +65,81 @@ namespace CuidadoConElChucho_Web.Services
             return vm;
         }
 
-        // ---------- DATOS PARA EL FORMULARIO ----------
+        // ---------- PÁGINA PÚBLICA DE DETALLE ----------
+
+        public async Task<ProductDetailVM?> GetDetailByIdAsync(int productId)
+        {
+            var product = await _productRepository.GetByIdWithDetailsAsync(productId);
+            if (product == null || !product.IsActive)
+            {
+                return null;
+            }
+
+            var galleryImages = await _imageRepository.GetByProductIdAsync(productId);
+
+            var images = new List<string>();
+            if (!string.IsNullOrEmpty(product.ImageName))
+            {
+                images.Add(product.ImageName);
+            }
+            images.AddRange(galleryImages.Select(g => g.ImageName));
+
+            var colors = product.Variations
+                .Where(v => v.IsActive)
+                .GroupBy(v => v.ColorId)
+                .Select(g => new ProductDetailColorVM
+                {
+                    ColorId = g.Key,
+                    Name = g.First().Color.Name,
+                    HexCode = g.First().Color.HexCode,
+                    ImageName = g.Select(v => v.ImageName).FirstOrDefault(n => !string.IsNullOrEmpty(n)),
+                    Sizes = g.Select(v => new ProductDetailSizeVM
+                    {
+                        SizeId = v.SizeId,
+                        Name = v.Size.Name,
+                        Stock = v.Stock,
+                        SKU = v.SKU
+                    }).OrderBy(s => s.SizeId).ToList()
+                })
+                .ToList();
+
+            var similar = await GetSimilarProductsAsync(product.CategoryId, product.ProductId);
+
+            return new ProductDetailVM
+            {
+                ProductId = product.ProductId,
+                Name = product.Name,
+                Description = product.Description,
+                CategoryId = product.CategoryId,
+                CategoryName = product.Category.Name,
+                GenderName = product.Gender.GetDisplayName(),
+                Price = product.Price,
+                SalePrice = product.SalePrice,
+                Images = images,
+                Colors = colors,
+                SimilarProducts = similar
+            };
+        }
+
+        public async Task<List<ProductCardVM>> GetSimilarProductsAsync(int categoryId, int excludeProductId, int take = 4)
+        {
+            var products = await _productRepository.GetAllWithDetailsAsync();
+
+            return products
+                .Where(p => p.CategoryId == categoryId && p.ProductId != excludeProductId && p.IsActive)
+                .Take(take)
+                .Select(p => new ProductCardVM
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    ImageName = p.ImageName,
+                    Price = p.Price,
+                    SalePrice = p.SalePrice
+                })
+                .ToList();
+        }
+
+        // ---------- DATOS PARA EL FORMULARIO (ADMIN) ----------
 
         public async Task<IEnumerable<CategoryVM>> GetCategoriesForSelectAsync()
         {
@@ -99,12 +174,13 @@ namespace CuidadoConElChucho_Web.Services
                 Name = productVM.Name.Trim(),
                 Description = productVM.Description.Trim(),
                 Price = productVM.Price,
+                SalePrice = productVM.SalePrice,
                 IsActive = productVM.IsActive,
                 Gender = productVM.Gender,
                 ImageName = productVM.ImageName
             };
 
-            await _productRepository.AddAsync(product); // EF asigna product.ProductId aquí
+            await _productRepository.AddAsync(product);
 
             await SaveGalleryImagesAsync(product.ProductId, productVM.GalleryImages);
             await SaveVariantsAsync(product.ProductId, productVM.Variants);
@@ -126,6 +202,7 @@ namespace CuidadoConElChucho_Web.Services
                 Name = productVM.Name.Trim(),
                 Description = productVM.Description.Trim(),
                 Price = productVM.Price,
+                SalePrice = productVM.SalePrice,
                 IsActive = productVM.IsActive,
                 Gender = productVM.Gender,
                 ImageName = productVM.ImageName
@@ -146,7 +223,7 @@ namespace CuidadoConElChucho_Web.Services
             var product = await _productRepository.GetByIdAsync(productId);
             if (product == null) return null;
 
-            await _productRepository.DeleteAsync(product); // Cascade borra Variations e Images
+            await _productRepository.DeleteAsync(product);
             return product.ImageName;
         }
 
@@ -289,8 +366,6 @@ namespace CuidadoConElChucho_Web.Services
                 }
             }
 
-            // Cualquier combinación que ya existía pero ya no llegó activa en el formulario
-            // se desactiva (no se borra: protege pedidos históricos que la referencian)
             var orphaned = existingVariations
                 .Where(v => v.IsActive && !postedActiveCombos.Contains((v.ColorId, v.SizeId)))
                 .ToList();
@@ -330,6 +405,7 @@ namespace CuidadoConElChucho_Web.Services
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
+                SalePrice = product.SalePrice,
                 IsActive = product.IsActive,
                 Gender = product.Gender,
                 ImageName = product.ImageName,
