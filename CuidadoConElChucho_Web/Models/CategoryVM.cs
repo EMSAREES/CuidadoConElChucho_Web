@@ -7,5 +7,7 @@ namespace CuidadoConElChucho_Web.Models
         public int CategoryId { get; set; }
 
         public string Name { get; set; }
+
+        public int ProductCount { get; set; } 
     }
 }

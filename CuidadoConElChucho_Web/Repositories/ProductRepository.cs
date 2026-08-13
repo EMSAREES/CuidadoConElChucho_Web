@@ -29,5 +29,11 @@ namespace CuidadoConElChucho_Web.Repositories
             return await _dbSet.AnyAsync(p =>
                 p.Name.ToLower() == name.ToLower() && p.ProductId != excludeId);
         }
+
+        public async Task<int> GetCountByCategoryIdAsync(int categoryId)
+        {
+            return await _dbSet.CountAsync(p => p.CategoryId == categoryId);
+        }
+
     }
 }

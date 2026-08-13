@@ -5,7 +5,7 @@ using CuidadoConElChucho_Web.Services;
 
 namespace CuidadoConElChucho_Web.Controllers
 {
-    public class CategoryController(CategoryService _categoryService) : Controller
+    public class CategoryController(CategoryService _categoryService, ProductService _productService) : Controller
     {
         // Usar async/await evita bloquear el hilo principal.
         // Con async Task<IActionResult> el controlador libera recursos mientras espera,
@@ -15,8 +15,15 @@ namespace CuidadoConElChucho_Web.Controllers
         public async Task<IActionResult> Index()
         {
             var categories = await _categoryService.GetAllAsync();
+
+            foreach (var category in categories)
+            {
+                category.ProductCount = await _productService.GetCountByCategoryIdAsync(category.CategoryId);
+            }
+
             return View(categories);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> AddEdit(int? id)

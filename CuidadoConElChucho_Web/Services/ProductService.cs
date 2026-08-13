@@ -65,6 +65,11 @@ namespace CuidadoConElChucho_Web.Services
             return vm;
         }
 
+        public async Task<int> GetCountByCategoryIdAsync(int categoryId)
+        {
+            return await _productRepository.GetCountByCategoryIdAsync(categoryId);
+        }
+
         // ---------- PÁGINA PÚBLICA DE DETALLE ----------
 
         public async Task<ProductDetailVM?> GetDetailByIdAsync(int productId)
