@@ -1,0 +1,283 @@
+﻿@model CuidadoConElChucho_Web.Models.ProductVM
+@{
+    var title = Model.ProductId == 0 ? "Nuevo producto" : "Editar producto";
+    var btnAction = Model.ProductId == 0 ? "Agregar producto" : "Guardar cambios";
+}
+
+<div class="cch-page-header">
+    <div>
+        <h2>@title</h2>
+        <div class="cch-subtitle">Completa la información, fotos y variantes de la prenda</div>
+    </div>
+</div>
+
+<form asp-controller="Product" asp-action="AddEdit" method="post" enctype="multipart/form-data" id="productForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ProductId" />
+    <input type="hidden" asp-for="ImageName" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="@(ViewBag.Message.ToString().Contains("Ya existe") || ViewBag.Message.ToString().Contains("Revisa") ? "cch-alert-error" : "cch-alert-success") mb-3">
+            <i class="fa-solid fa-circle-info"></i> @ViewBag.Message
+        </div>
+    }
+
+    <!-- ===== DATOS GENERALES ===== -->
+    <div class="cch-form-card">
+        <div class="row g-4">
+            <div class="col-12 col-md-4">
+                <label class="form-label">Imagen de portada</label>
+                <div class="cch-dropzone" id="imageDropzone">
+                    <img id="imagePreview"
+                         src="@(string.IsNullOrEmpty(Model.ImageName) ? "" : Url.Content("~/images/products/" + Model.ImageName))"
+                         class="@(string.IsNullOrEmpty(Model.ImageName) ? "d-none" : "")" />
+                    <div class="cch-dropzone-placeholder" id="imagePlaceholder">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <div>Arrastra una imagen<br />o haz clic aquí</div>
+                    </div>
+                </div>
+                <input asp-for="ImageFile" type="file" accept="image/*" class="d-none" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-8">
+                <div class="row g-3">
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="CategoryId" class="form-label">Categoría</label>
+                        <select asp-for="CategoryId" class="form-select"
+                                asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "Name"))">
+                            <option value="">Selecciona una categoría</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="Gender" class="form-label">Género</label>
+                        <select asp-for="Gender" class="form-select" asp-items="Html.GetEnumSelectList<Gender>()"></select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Name" class="form-label">Nombre del producto</label>
+                        <input asp-for="Name" class="form-control" autocomplete="off" placeholder="Ej. Playera oversize Chucho" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="Price" class="form-label">Precio</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input asp-for="Price" class="form-control" autocomplete="off" placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-sm-6 d-flex align-items-end">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsActive" class="form-check-input" role="switch" />
+                            <label asp-for="IsActive" class="form-check-label">Producto activo</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Description" class="form-label">Descripción</label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Material, corte, detalles del producto..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== GALERÍA DE FOTOS ADICIONALES ===== -->
+    <div class="cch-form-card mt-4">
+        <label class="form-label">Fotos adicionales (opcional)</label>
+        <div class="cch-subtitle mb-3">Frente, espalda, perfil izquierdo, perfil derecho...</div>
+
+        <div id="galleryContainer" class="cch-gallery-grid">
+            @for (int i = 0; i < Model.GalleryImages.Count; i++)
+            {
+                var image = Model.GalleryImages[i];
+                <div class="cch-gallery-block" data-index="@i" data-existing="true">
+                    <div class="cch-gallery-thumb">
+                        <img src="@Url.Content("~/images/products/" + image.ImageName)" />
+                    </div>
+                    <input type="text" name="GalleryImages[@i].Label" class="form-control form-control-sm mt-2"
+                           placeholder="Ej. Frente, espalda..." value="@image.Label" />
+                    <input type="hidden" name="GalleryImages[@i].ProductImageId" value="@image.ProductImageId" />
+                    <input type="hidden" name="GalleryImages[@i].ToDelete" class="cch-gallery-todelete" value="false" />
+                    <button type="button" class="btn-cch-icon btn-cch-delete cch-remove-gallery mt-2" title="Quitar">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            }
+        </div>
+
+        <button type="button" class="btn btn-cch-outline mt-3" id="addGalleryBtn">
+            <i class="fa-solid fa-plus"></i> Agregar foto
+        </button>
+
+        <template id="galleryBlockTemplate">
+            <div class="cch-gallery-block" data-index="__IDX__" data-existing="false">
+                <div class="cch-dropzone cch-gallery-dropzone" data-role="dropzone">
+                    <img class="cch-gallery-preview d-none" data-role="preview" />
+                    <div class="cch-dropzone-placeholder" data-role="placeholder">
+                        <i class="fa-solid fa-camera"></i>
+                        <div>Subir foto</div>
+                    </div>
+                </div>
+                <input type="file" name="GalleryImages[__IDX__].ImageFile" accept="image/*" class="d-none cch-gallery-file" data-role="file" />
+                <input type="text" name="GalleryImages[__IDX__].Label" class="form-control form-control-sm mt-2" placeholder="Ej. Frente, espalda..." />
+                <input type="hidden" name="GalleryImages[__IDX__].ProductImageId" value="0" />
+                <input type="hidden" name="GalleryImages[__IDX__].ToDelete" class="cch-gallery-todelete" value="false" />
+                <button type="button" class="btn-cch-icon btn-cch-delete cch-remove-gallery mt-2" title="Quitar">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </template>
+    </div>
+
+    <!-- ===== VARIANTES: COLOR + TALLAS + STOCK ===== -->
+    <div class="cch-form-card mt-4">
+        <label class="form-label">Colores y tallas disponibles</label>
+        <div class="cch-subtitle mb-3">Agrega un bloque por cada color; marca solo las tallas con existencia</div>
+
+        <div id="variantsContainer">
+            @for (int i = 0; i < Model.Variants.Count; i++)
+            {
+                var group = Model.Variants[i];
+                <div class="cch-variant-block" data-index="@i">
+                    <div class="cch-variant-header">
+                        <div class="cch-variant-color-select">
+                            <label class="form-label">Color</label>
+                            <select name="Variants[@i].ColorId" class="form-select cch-variant-color">
+                                <option value="">Selecciona un color</option>
+                                @foreach (var color in ViewBag.Colors)
+                                {
+                                    <option value="@color.ColorId" data-hex="@color.HexCode"
+                                            selected="@(group.ColorId == color.ColorId ? "selected" : null)">@color.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="button" class="btn-cch-icon btn-cch-delete cch-remove-variant" title="Quitar color">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+
+                    <div class="cch-variant-image-row">
+                        <div class="cch-dropzone cch-variant-dropzone" data-role="dropzone">
+                            <img class="cch-variant-preview @(string.IsNullOrEmpty(group.ImageName) ? "d-none" : "")"
+                                 data-role="preview"
+                                 src="@(string.IsNullOrEmpty(group.ImageName) ? "" : Url.Content("~/images/products/variants/" + group.ImageName))" />
+                            <div class="cch-dropzone-placeholder @(string.IsNullOrEmpty(group.ImageName) ? "" : "d-none")" data-role="placeholder">
+                                <i class="fa-solid fa-image"></i>
+                                <div>Foto de este color (opcional)</div>
+                            </div>
+                        </div>
+                        <input type="file" name="Variants[@i].ImageFile" accept="image/*" class="d-none cch-variant-file" data-role="file" />
+                        <input type="hidden" name="Variants[@i].ImageName" value="@group.ImageName" />
+                    </div>
+
+                    <label class="form-label mt-3">Tallas disponibles y stock</label>
+                    <div class="cch-size-grid">
+                        @{
+                            int j = 0;
+                        }
+                        @foreach (var size in ViewBag.Sizes)
+                        {
+                            var current = group.Sizes.FirstOrDefault(s => s.SizeId == size.SizeId);
+                            var isChecked = current != null && current.IsActive;
+                            var stockValue = current?.Stock ?? 0;
+
+                            <div class="cch-size-chip @(isChecked ? "cch-size-chip-active" : "")">
+                                <div class="form-check">
+                                    <input type="checkbox" id="chk_@(i)_@(j)" class="form-check-input cch-size-check"
+                                           name="Variants[@i].Sizes[@j].IsActive" value="true"
+                                           checked="@(isChecked ? "checked" : null)" />
+                                    <label class="form-check-label" for="chk_@(i)_@(j)">@size.Name</label>
+                                </div>
+                                <input type="hidden" name="Variants[@i].Sizes[@j].SizeId" value="@size.SizeId" />
+                                <input type="number" min="0" name="Variants[@i].Sizes[@j].Stock"
+                                       class="form-control form-control-sm cch-size-stock"
+                                       placeholder="Stock" value="@stockValue"
+                                       disabled="@(!isChecked ? "disabled" : null)" />
+                            </div>
+                            j++;
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <button type="button" class="btn btn-cch-outline mt-2" id="addVariantBtn">
+            <i class="fa-solid fa-plus"></i> Agregar otro color
+        </button>
+
+        <template id="variantBlockTemplate">
+            <div class="cch-variant-block" data-index="__IDX__">
+                <div class="cch-variant-header">
+                    <div class="cch-variant-color-select">
+                        <label class="form-label">Color</label>
+                        <select name="Variants[__IDX__].ColorId" class="form-select cch-variant-color">
+                            <option value="">Selecciona un color</option>
+                            @foreach (var color in ViewBag.Colors)
+                            {
+                                <option value="@color.ColorId" data-hex="@color.HexCode">@color.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="button" class="btn-cch-icon btn-cch-delete cch-remove-variant" title="Quitar color">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+
+                <div class="cch-variant-image-row">
+                    <div class="cch-dropzone cch-variant-dropzone" data-role="dropzone">
+                        <img class="cch-variant-preview d-none" data-role="preview" />
+                        <div class="cch-dropzone-placeholder" data-role="placeholder">
+                            <i class="fa-solid fa-image"></i>
+                            <div>Foto de este color (opcional)</div>
+                        </div>
+                    </div>
+                    <input type="file" name="Variants[__IDX__].ImageFile" accept="image/*" class="d-none cch-variant-file" data-role="file" />
+                    <input type="hidden" name="Variants[__IDX__].ImageName" value="" />
+                </div>
+
+                <label class="form-label mt-3">Tallas disponibles y stock</label>
+                <div class="cch-size-grid">
+                    @{
+                        int jt = 0;
+                    }
+                    @foreach (var size in ViewBag.Sizes)
+                    {
+                        <div class="cch-size-chip">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input cch-size-check"
+                                       name="Variants[__IDX__].Sizes[@jt].IsActive" value="true" />
+                                <label class="form-check-label">@size.Name</label>
+                            </div>
+                            <input type="hidden" name="Variants[__IDX__].Sizes[@jt].SizeId" value="@size.SizeId" />
+                            <input type="number" min="0" name="Variants[__IDX__].Sizes[@jt].Stock"
+                                   class="form-control form-control-sm cch-size-stock" placeholder="Stock" disabled>
+                        </div>
+                        jt++;
+                    }
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-cch-primary" type="submit">
+            <i class="fa-solid fa-floppy-disk"></i> @btnAction
+        </button>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-cch-outline">Volver</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

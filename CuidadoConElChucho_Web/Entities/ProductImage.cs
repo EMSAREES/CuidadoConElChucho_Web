@@ -10,6 +10,8 @@
 
         public bool IsPrimary { get; set; }
 
+        public string? Label { get; set; }
+
         public Product Product { get; set; } = null!;
     }
 }

@@ -1,39 +1,45 @@
 ﻿@model CuidadoConElChucho_Web.Models.CategoryVM
 @{
     var title = Model.CategoryId == 0 ? "Nueva categoría" : "Editar categoría";
-    var btnAction = Model.CategoryId == 0 ? "Agregar" : "Guardar";
+    var btnAction = Model.CategoryId == 0 ? "Agregar" : "Guardar cambios";
 }
-<div class="row">
-    <div class="col-6">
 
+<div class="cch-page-header">
+    <div>
         <h2>@title</h2>
+        <div class="cch-subtitle">Las categorías se guardan en mayúsculas automáticamente</div>
+    </div>
+</div>
 
-        <hr/>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="cch-form-card">
+            <form asp-controller="Category" asp-action="AddEdit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="CategoryId" />
 
-        <form asp-controller="Category" asp-action="AddEdit" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="CategoryId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                @if (ViewBag.Message != null)
+                {
+                    <div class="cch-alert-success mb-3">
+                        <i class="fa-solid fa-circle-check"></i> @ViewBag.Message
+                    </div>
+                }
 
-            <div class="mb-3">
-                <label asp-for="Name" class="form-label">Nombre</label>
-                <input asp-for="Name" class="form-control" autocomplete="off" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            
-            @if(ViewBag.message != null)
-            {
-                <div class="alert alert-success" role="alert">
-                    @ViewBag.message
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Nombre</label>
+                    <input asp-for="Name" class="form-control" autocomplete="off" placeholder="Ej. PLAYERAS" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-            }
 
-            <div class="d-grid gap-2 d-md-block mt-4">
-                <button class="btn btn-primary" type="submit">@btnAction</button>
-                <a asp-controller="Category" asp-action="Index" class="btn btn-warning">Volver</a>
-            </div>
-        </form>
-
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-cch-primary" type="submit">
+                        <i class="fa-solid fa-floppy-disk"></i> @btnAction
+                    </button>
+                    <a asp-controller="Category" asp-action="Index" class="btn btn-cch-outline">Volver</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

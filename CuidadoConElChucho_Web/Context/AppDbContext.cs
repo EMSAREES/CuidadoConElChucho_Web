@@ -298,7 +298,6 @@ namespace CuidadoConElChucho_Web.Context
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-
             // PRODUCT VARIATION
             modelBuilder.Entity<ProductVariation>(e =>
             {
@@ -311,20 +310,15 @@ namespace CuidadoConElChucho_Web.Context
                 e.Property(pv => pv.Stock)
                     .IsRequired();
 
+                e.Property(pv => pv.IsActive)
+                    .IsRequired();
+
                 e.Property(pv => pv.ImageName)
                     .HasMaxLength(255);
 
-
-                // SKU único
                 e.HasIndex(pv => pv.SKU)
                     .IsUnique();
 
-
-                // Un producto no puede tener dos veces
-                // la misma combinación:
-                //
-                // PLAYERA + NARANJA + M
-                //
                 e.HasIndex(pv => new
                 {
                     pv.ProductId,
@@ -333,22 +327,16 @@ namespace CuidadoConElChucho_Web.Context
                 })
                 .IsUnique();
 
-
-                // Product -> Variations
                 e.HasOne(pv => pv.Product)
                     .WithMany(p => p.Variations)
                     .HasForeignKey(pv => pv.ProductId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-
-                // Color -> Variations
                 e.HasOne(pv => pv.Color)
                     .WithMany(c => c.ProductVariations)
                     .HasForeignKey(pv => pv.ColorId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-
-                // Size -> Variations
                 e.HasOne(pv => pv.Size)
                     .WithMany(s => s.ProductVariations)
                     .HasForeignKey(pv => pv.SizeId)
@@ -368,8 +356,9 @@ namespace CuidadoConElChucho_Web.Context
                 e.Property(pi => pi.IsPrimary)
                     .IsRequired();
 
+                e.Property(pi => pi.Label)
+                    .HasMaxLength(50);
 
-                // Product -> ProductImages
                 e.HasOne(pi => pi.Product)
                     .WithMany()
                     .HasForeignKey(pi => pi.ProductId)

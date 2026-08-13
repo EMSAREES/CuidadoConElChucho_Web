@@ -19,6 +19,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<CategoryRepository>();
 builder.Services.AddScoped<CategoryService>();
 
+builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+
+builder.Services.AddScoped<ColorRepository>();
+builder.Services.AddScoped<SizeRepository>();
+builder.Services.AddScoped<ProductVariationRepository>();
+builder.Services.AddScoped<ProductImageRepository>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

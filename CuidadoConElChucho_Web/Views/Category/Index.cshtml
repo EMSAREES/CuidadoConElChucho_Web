@@ -1,54 +1,59 @@
 ﻿@model List<CategoryVM>
 
-<div class="row justify-content-between mt-4">
-    <div class="Col-4">
-        <h4>Category</h4>
+<div class="cch-page-header">
+    <div>
+        <h1>Categorías</h1>
+        <div class="cch-subtitle">Organiza los tipos de prendas de la tienda</div>
     </div>
-
-    <div class="col-4 text-end">
-        <a href="/Category/AddEdit" class="btn btn-success"><i class="fa-solid fa-plus"></i> Create new</a>
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="cch-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="cchSearch" class="form-control" placeholder="Buscar categoría..." />
+        </div>
+        <a href="/Category/AddEdit" class="btn btn-cch-primary">
+            <i class="fa-solid fa-plus"></i> Nueva categoría
+        </a>
     </div>
 </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th style="width:120px">Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var category in Model)
-        {
-            <tr>
-                <td>@category.Name</td>
-                <td style="width:120px">
-                    <a href="/Category/AddEdit/@category.CategoryId" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen"></i></a>
-                    <button class="btn btn-sm btn-danger" onclick="deleteCategory(@category.CategoryId)"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-@section Scripts {
-    <script>
-        function deleteCategory(id) {
-            Swal.fire({
-                title: "Are you sure?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!",
-                cancelButtonText: "No, back",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Redirige directamente
-                    window.location.href = '@Url.Action("Delete", "Category")' + '?id=' + id;
+@if (Model.Count == 0)
+{
+    <div class="cch-empty cch-table-card">
+        <i class="fa-solid fa-tags"></i>
+        <p class="mb-0">Aún no hay categorías registradas.</p>
+    </div>
+}
+else
+{
+    <div class="cch-table-card">
+        <table class="table cch-table mb-0">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Productos</th>
+                    <th style="width:140px">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in Model)
+                {
+                    <tr data-search-item="@category.Name">
+                        <td class="fw-semibold">@category.Name</td>
+                        <td><span class="cch-badge-count">0</span></td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="/Category/AddEdit/@category.CategoryId" class="btn-cch-icon btn-cch-edit" title="Editar">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <button type="button" class="btn-cch-icon btn-cch-delete" title="Eliminar"
+                                        onclick="cchConfirmDelete('@Url.Action("Delete", "Category")?id=@category.CategoryId', '@category.Name')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                 }
-            });
-        }
-
-    </script>
+            </tbody>
+        </table>
+    </div>
 }

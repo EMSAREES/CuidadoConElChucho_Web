@@ -20,6 +20,8 @@ namespace CuidadoConElChucho_Web.Entities
 
         public string? ImageName { get; set; }
 
+        public bool IsActive { get; set; } = true;
+
         public Product Product { get; set; } = null!;
 
         public Color Color { get; set; } = null!;
